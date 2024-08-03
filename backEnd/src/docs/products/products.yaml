@@ -1,0 +1,239 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtener todos los productos 
+      tags: 
+        - Product
+      responses:
+        '200':
+          description: Productos consultados correctamente
+          content:
+            application/json:
+              schema:
+                type: Array
+                items:
+                  $ref: '#/models/product'
+        '500':
+          description: Error al consultar los productos
+    post: 
+      summary: Crear un nuevo producto
+      tags:
+        - Product
+      parameters:
+        - name: body
+          in: body
+          required: true
+            schema:
+              type: Array
+              properties:
+                product_Id:
+                  type: ObjectId
+                title:
+                  type: String
+                description:
+                  type: String
+                category:
+                  type: String
+                Quantity:
+                  type: Number
+                status:
+                  type: Boolean
+                stock:
+                  type: Number
+                code:
+                  type: String
+                price:
+                  type: Number
+                code:
+                  type: String
+                items:
+                  $ref: '#/models/product'
+                thumbnail:
+                  type: Default
+      responses:
+        '201':
+          description: Producto creado correctamente
+          content:
+            application/json:
+              schema:
+                type: Array
+                  items:
+                    $ref: '#/models/product'
+                
+        '500':
+          description: Error al crear el producto
+  /api/products/{id}:
+    get:
+     summary: Obtener un producto 
+      tags: 
+        - Product
+      responses:
+        '200':
+          description: Producto obtenido correctamente
+          content:
+            application/json:
+              schema:
+                type: Object
+                properties:
+                  product_Id:
+                    type: ObjectId
+                  title:
+                    type: String
+                  description:
+                    type: String
+                  category:
+                    type: String
+                  Quantity:
+                    type: Number
+                  status:
+                    type: Boolean
+                  stock:
+                    type: Number
+                  code:
+                    type: String
+                  price:
+                    type: Number
+                  code:
+                    type: String
+                  items:
+                    $ref: '#/models/cart'
+                  thumbnail:
+                    type: Default
+                  items:
+                    $ref: '#/models/product'
+        '500':
+          description: Error al obtener usuarios
+    put: 
+      summary: Actualizar un producto 
+      tags: 
+        - Product
+      parameters:
+        - name: body
+          in: body
+          required: true
+            schema:
+              type: Array
+              properties:
+                product_Id:
+                  type: ObjectId
+                title:
+                  type: String
+                description:
+                  type: String
+                category:
+                  type: String
+                Quantity:
+                  type: Number
+                status:
+                  type: Boolean
+                stock:
+                  type: Number
+                code:
+                  type: String
+                price:
+                  type: Number
+                code:
+                  type: String
+                items:
+                  $ref: '#/models/product'
+                thumbnail:
+                  type: Default
+      responses:
+        '200':
+          description: Productos actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: Object
+                  properties:
+                    product_Id:
+                      type: ObjectId
+                    title:
+                      type: String
+                    description:
+                      type: String
+                    category:
+                      type: String
+                    Quantity:
+                      type: Number
+                    status:
+                      type: Boolean
+                    stock:
+                      type: Number
+                    code:
+                      type: String
+                    price:
+                      type: Number
+                    code:
+                      type: String
+                    items:
+                      $ref: '#/models/cart'
+                    thumbnail:
+                      type: Default
+                    items:
+                      $ref: '#/models/product'
+        '500':
+          description: Error al actualizar el producto
+    delete: 
+      summary: Eliminar un producto 
+      tags: 
+        - Product
+      responses:
+        '200':
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Products'
+        '500':
+          description: Error al eliminar el producto
+
+components:
+    schemas:
+     Product:
+        type: object
+        properties:
+          product_Id:
+            type: ObjectId
+            description: Id autogerado por MongoDB
+          title:
+            type: String
+            description: Nombre del producto
+          description:
+            type: String
+            description: Descripción del producto
+          category:
+            type: String
+            description: categoría del producto
+          status:
+            type: Boolean
+            description: Estado del producto
+          stock:
+            type: Number
+            description: Cantidad de producto en stock
+          code:
+            type: String
+            description: Código de producto en BD
+          price:
+            type: Number
+            description: Precio comercial de producto
+          thumbnail:
+            type: Default
+            description: Imagen de producto
+        example:
+          Product_id: ObjectId('1321ewew22')
+          Title: Lentejas
+          description: Sabrosas y baratas
+          category: Comida
+          status: 'True'
+          stock: '25'
+          code: 'ltn45d'
+          price: '15000'
+          thumbnail: 'http://leguminosa/lenteja?:mvn100'
+
+        
+
+
+

@@ -1,0 +1,218 @@
+paths:
+  /api/cart/:
+    get:
+      summary: Crear un carrito de compras
+      tags: 
+        - cart
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              Product_id:
+                type: ObjectId
+              Quantity:
+                type: Number
+      responses:
+        '201':
+          description: Carrito creado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: Array
+                    items:
+                      $ref: '#/models/cart'
+        '500':
+          description: Error interno del servidor al crear carrito
+    /api/cart/{id}:
+    get:
+      summary: Obtener todos los usuarios 
+      tags: 
+        - cart
+      responses:
+        '200': 
+          description: Carrito consultado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: Array
+                    items:
+                      $ref: '#/models/cart'
+        '500':
+          description: 'Error interno del servidor al consultar carrito'
+    /api/cart/{id}:
+    get: 
+      summary: Crear ticket de compra.
+      tags: 
+        - cart
+        - product
+        - ticket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              code:
+                type: Sring
+              purchase_datetime:
+                type: Date
+              amount:
+                type: Number
+              purchaser:
+                type: String
+              products:
+                type: Array
+      responses:
+        '200': 
+          description: 'Ticket creado exitosamente.' 
+          content:
+            application/json:
+              schema:
+                type: Object
+                  properties:
+                    code:
+                      type: Sring
+                      description: Número del ticket
+                    purchase_datetime:
+                      type: Date
+                    amount:
+                      type: Number
+                    purchaser:
+                      type: String
+                    products:
+                      type: Array
+        '400':
+          description: Error porque no hay productos en el stock.
+        '404':
+          description: Error porque el carrito no existe.
+        '500':
+          description: Error en el servidor por no poder creasr el ticket.
+    post: 
+      summary: Insertar productos en el carrito de compras.
+      tags:
+        - cart
+        - product
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+               product_Id:
+                 type: ObjectId
+               title:
+                  type: String
+               description:
+                  type: String
+               category:
+                  type: String
+               quantity:
+                  type: Number
+               status:
+                  type: Boolean
+               stock:
+                  type: Number
+               code:
+                  type: String
+               price:
+                  type: Number
+               code:
+                  type: String
+                thumbnail:
+                  type: Default
+      responses:
+        '200':
+          description: Producto insertado correctamente en el carrito.
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/models/cart'
+        '403':
+          description: Error porque el usuario no está autorizado para introducir productos en el carrito.
+        '500':
+          description: Error interno del servidor al insertar producto.
+    
+  components:
+    schemas:
+      Cart:
+        type: Array
+        properties:
+          Product_id:
+            type: ObjectId
+            description: Id autogerado por MongoDB
+          Quantity:
+            type: Number
+            description: Cantidad de objetos en carrito
+        example:
+          Product_id: ObjectId('hyuhf458774ddd2')
+          Quantity: '7'
+     Product:
+        type: object
+        properties:
+          product_Id:
+            type: ObjectId
+            description: Id autogerado por MongoDB
+          title:
+            type: String
+            description: Nombre del producto
+          description:
+            type: String
+            description: Descripción del producto
+          category:
+            type: String
+            description: categoría del producto
+          status:
+            type: Boolean
+            description: Estado del producto
+          stock:
+            type: Number
+            description: Cantidad de producto en stock
+          code:
+            type: String
+            description: Código de producto en BD
+          price:
+            type: Number
+            description: Precio comercial de producto
+          thumbnail:
+            type: Default
+            description: Imagen de producto
+        example:
+          Product_id: ObjectId('1321ewew22')
+          Title: Lentejas
+          description: Sabrosas y baratas
+          category: Comida
+          status: 'True'
+          stock: '25'
+          code: 'ltn45d'
+          price: '15000'
+          thumbnail: 'http://leguminosa/lenteja?:mvn100'
+      Ticket:
+        type: object
+        properties:
+          code:
+            type: Sring
+            description: Número del ticket
+          purchase_datetime:
+            type: Date
+            description: Fecha y hora del ticket
+          amount:
+            type: Number
+            description: Cantidad de productos comprados
+          purchaser:
+            type: String
+            description: Identidad del comprador
+          products:
+            type: Array
+            description: Productos comprados 
+        example:
+          code: 'vnp1255k'
+          purchase_datetime: '05/12/2024//15:35'
+          amount: '7'
+          purchaser: 'mirandanaval@gmail.com'
+          products: [lentejas, lentejas, piña, fresa, jabón detergente]
