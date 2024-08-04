@@ -3,8 +3,7 @@ import { userModel } from "../../../models/user.js";
 import varenv from "../dotenv.js";
 
 const cookieExtractor = req => {
-    //{} no hay cookies != esta cookie no existe
-    //Si existen cookies, asigno mi cookie en especifico
+    //Se comprueba que existan cookies; si hay se asignan específicamente
     const token = req.cookies ? req.cookies.jwtCookie : {}
     console.log(token)
     return token

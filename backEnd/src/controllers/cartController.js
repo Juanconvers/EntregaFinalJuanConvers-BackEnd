@@ -7,7 +7,7 @@ export const createCart = async (req, res) => {
         const mensaje = await cartModel.create({ products: [] })
         res.status(201).send(mensaje)
     } catch (e) {
-        res.status(500).send(`Error interno del servidor al crear carrito: ${error}`)
+        res.status(500).send(`Error interno del servidor al crear el carrito: ${error}`)
     }
 
 }
@@ -24,34 +24,38 @@ export const getCart = async (req, res) => {
 
 export const createTicket = async (req, res) => {
     try {
-        console.log(req.user)
+        
         const cartId = req.params.cid
         const cart = await cartModel.findById(cartId)
         const prodSinStock = []
         if (cart) {
             cart.products.forEach(async (prod) => {
                 let producto = await productModel.findById(prod.id_prod)
-                if (producto.stock - prod.quantity < 0) {
+                if (productModel.stock < prod.quantity) {
                     prodSinStock.push(producto.id)
                 }
             })
-            if (prodSinStock.length == 0) {
-                //const totalPrice = cart.products.reduce((a, b) => (a.id_prod.price * a.quantity) + (b.id_prod.price * b.quantity), 0)
-                console.log(cart.products)
-                const aux = [...cart.products]
+            if (prodSinStock.length = 0) {
+                const totalPrice = cart.products.reduce((a, b) => (a.id_prod.price * a.quantity) + (b.id_prod.price * b.quantity), 0)
+                
+                if (req.user.role == 'Premium') {
+                    totalPrice * 0.9
+                }               
+                
                 const newTicket = await ticketModel.create({
                     code: crypto.randomUUID(),
                     purchaser: req.user.email,
-                    amount: 5,
+                    amount: totalPrice,
                     products: cart.products
                 })
                 //Descontar stock de cada uno de los productos
                 cart.products.forEach(async (prod) => {
-                    /*await productModel.findByIdAndUpdate(prod.id_prod, {
+                    await productModel.findByIdAndUpdate(prod.id_prod, {
                         stock: prod.quantity
-                    })*/
-
+                    })
                 })
+
+                //Vaciar carrito al comprar
                 await cartModel.findByIdAndUpdate(cartId, {
                     products: []
                 })
@@ -75,17 +79,14 @@ export const createTicket = async (req, res) => {
         }
 
     } catch (e) {
-        console.log(e)
-        res.status(500).send(e)
+        res.status(500).send(`Error interno del servidor al crear ticket: ${e}`)
     }
-
-
 }
 
 
 export const insertProductCart = async (req, res) => {
     try {
-        if (req.user.rol == "Admin") {
+        if (req.user.role == "Admin") {
             const cartId = req.params.cid
             const productId = req.params.pid
             const { quantity } = req.body
@@ -95,7 +96,7 @@ export const insertProductCart = async (req, res) => {
 
             if (indice != -1) {
                 //Consultar Stock para ver cantidades
-                cart.products[indice].quantity = quantity //5 + 5 = 10, asigno 10 a quantity
+                cart.products[indice].quantity += quantity //5 + 5 = 10, asigno 10 a quantity
             } else {
                 cart.products.push({ id_prod: productId, quantity: quantity })
             }
@@ -106,7 +107,22 @@ export const insertProductCart = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al insertar producto: ${error}`)
+        res.status(500).send(`Error interno del servidor al insertar el producto: ${error}`)
     }
 
+}
+
+export const deleteFromCart = async (req, res) => {
+    try {
+        const idProducto = req.params.pid
+        const idCart = req.params.cid
+        const cart = await cartModel.findById(idCart)
+        const indice = cart.products.findIndex(product => product.id_prod == idProducto)
+        if ( indice != -1) {
+            cart.products.splice(indice, 1)
+            const mensaje = await cartModel.findByIdAndUpdate(idCart, cart)
+            res.status(200).send(mensaje)}
+    } catch (error) {
+        res.status(500).send(`Error interno del servidor al eliminar el producto: ${error}`)
+    }
 }
